@@ -1,4 +1,4 @@
-package apiwebtp2;
+package APIWeb;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class APIWebTP2 {
+public class APIWeb1 {
 
     private static String lien = "https://liris-ktbs01.insa-lyon.fr:8000/blogephem/";
     private static String urlCherche = "https://liris-ktbs01.insa-lyon.fr:8000/blogephem/?search=";
@@ -79,7 +79,7 @@ public class APIWebTP2 {
         writer.close();
         cx.connect();
         System.out.println("Status : " + cx.getResponseCode());
-        System.out.println("URL : " + cx.getURL());
+        System.out.println("URL : " + cx.getURL() + "\n");
         urlBillet = cx.getURL().toString();
     }
     
