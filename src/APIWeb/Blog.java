@@ -14,21 +14,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
-import static APIWeb.XML.getStringFromXML;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class APIWeb1 {
+public class Blog {
 
     /*private String lien = "https://liris-ktbs01.insa-lyon.fr:8000/blogephem/";
     private String urlCherche = "https://liris-ktbs01.insa-lyon.fr:8000/blogephem/?search=";
-    private String urlCreer = "https://liris-ktbs01.insa-lyon.fr:8000/blogephem/";
-    private String urlBillet = "";*/
+    private String urlCreer = "https://liris-ktbs01.insa-lyon.fr:8000/blogephem/";*/
+
     private URL url;
     private ArrayList<Articles> ArticleList;
     private ArrayList<URL> URLList;
 
-    public APIWeb1(URL url) {
+    public Blog(URL url) {
         this.url = url;
         this.ArticleList = new ArrayList<>();
         this.URLList = new ArrayList<>();
@@ -40,7 +37,7 @@ public class APIWeb1 {
 
     public void menu() throws IOException, ProtocolException, ParserConfigurationException, SAXException {
         try {
-            listeURLBillet();
+            listeURLArticle();
             int numSwitch = -1;
             do {
                 System.out.println("0 : Quit");
@@ -48,7 +45,8 @@ public class APIWeb1 {
                 System.out.println("2 : Post article");
                 System.out.println("3 : Search article");
                 System.out.println("4 : Edit article");
-                System.out.print("Choix : ");
+                System.out.println("5 : Delete article");
+                System.out.print("Choice : ");
                 numSwitch = Clavier.lireInt();
 
                 switch (numSwitch) {
@@ -74,14 +72,18 @@ public class APIWeb1 {
                         System.out.print("\nNew content : ");
                         String newBody = Clavier.lireString();
                         editArticle(smallURLEdit, newTitle, newBody);
+                    case 5:
+                        System.out.print("Small URL (you can find it by search): ");
+                        String smallURLDelete = Clavier.lireString();
+                        deleteArticle(smallURLDelete);
                 }
             } while (numSwitch != 0);
         } catch (Exception ex) {
-            System.out.println("menu exception");
+            System.out.println("Menu exception");
         }
     }
 
-    public void listeURLBillet() throws ProtocolException, IOException, ParserConfigurationException, SAXException {
+    public void listeURLArticle() throws ProtocolException, IOException, ParserConfigurationException, SAXException {
         this.ArticleList = new ArrayList<>();
         this.URLList = new ArrayList<>();
 
@@ -147,13 +149,13 @@ public class APIWeb1 {
             Articles article = new Articles(cx.getURL());
             this.ArticleList.add(article);
         } else {
-            System.out.println("Erreur dans la création de l'article");
+            System.out.println("Post error");
         }
     }
 
     public void searchArticle(String find) {
         try {
-            listeURLBillet();
+            listeURLArticle();
         } catch (Exception ex) {
             System.out.println("search exception");
         }
@@ -199,6 +201,25 @@ public class APIWeb1 {
             }
         }
     }
+
+    private void deleteArticle(String smallURL) {
+        for (Articles article : ArticleList) {
+            if (article.getShortURL().equals(smallURL)) {
+                try {
+                    article.delete();
+                } catch (Exception ex) {
+                    System.out.println("Delete exception");
+                }
+            }
+        }
+        try {
+            listeURLArticle();
+        } catch (Exception ex) {
+            System.out.println("Delete refresh exception");
+        }
+    }
+
+    //Anciennes méthodes pour le début du TP
     /*public String getHTML() throws ProtocolException, MalformedURLException, IOException {
         URL url = new URL(lien);
         HttpURLConnection cx = (HttpURLConnection) url.openConnection();
@@ -214,10 +235,7 @@ public class APIWeb1 {
         String HTML = result.toString("UTF-8");
         return HTML;
     }*/
- /*public ArrayList<Articles> getArticles()
-    {
-        return this.ArticleList;
-    }*/
+
  /*private ArrayList<String> parseLiens(String HTML) {
         Pattern pattern = Pattern.compile("href=\\\"([^\\\"]*)\\\"");
         Matcher matcher = pattern.matcher(HTML);

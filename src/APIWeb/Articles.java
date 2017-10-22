@@ -10,20 +10,20 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import static APIWeb.XML.getStringFromXML;
 
-
 public class Articles {
+
     private URL url;
     private String title;
     private String body;
     private String date;
     private String shortURL;
-    
+
     public Articles(URL url) throws ProtocolException, IOException, ParserConfigurationException, SAXException {
         this.url = url;
         refresh();
     }
-    protected void refresh() throws ProtocolException, IOException, ParserConfigurationException, SAXException
-    {
+
+    protected void refresh() throws ProtocolException, IOException, ParserConfigurationException, SAXException {
         HttpURLConnection cx = (HttpURLConnection) this.url.openConnection();
         cx.setRequestMethod("GET");
         cx.setRequestProperty("accept-charset", "UTF-8");
@@ -33,12 +33,11 @@ public class Articles {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = bodyStream.read(buffer)) != -1)
-        {
+        while ((length = bodyStream.read(buffer)) != -1) {
             result.write(buffer, 0, length);
         }
         String xmlString = result.toString("UTF-8");
-        
+
         this.body = getStringFromXML("body", xmlString);
         this.title = getStringFromXML("title", xmlString);
         this.date = getStringFromXML("date", xmlString);
@@ -84,18 +83,17 @@ public class Articles {
     public void setShortURL(String shortURL) {
         this.shortURL = shortURL;
     }
-    
+
     public void delete() throws IOException {
         HttpURLConnection cx = (HttpURLConnection) this.url.openConnection();
         cx.setRequestMethod("DELETE");
         cx.connect();
         int status = cx.getResponseCode();
-        if(status == 200) {
+        if (status == 200) {
             System.out.println("Message deleted");
-        }
-        else {
-           System.out.println("Delete error"); 
+        } else {
+            System.out.println("Delete error");
         }
     }
-    
+
 }
