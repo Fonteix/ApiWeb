@@ -46,7 +46,7 @@ public class APIWeb1 {
                 System.out.println("0 : quitter");
                 System.out.println("1 : Liste billet");
                 System.out.println("2 : Poster un billet");
-                System.out.println("Choix : ");
+                System.out.print("Choix : ");
                 numSwitch = Clavier.lireInt();
 
                 switch (numSwitch) {
@@ -56,7 +56,8 @@ public class APIWeb1 {
                         listeArticle();
                         break;
                     case 2:
-                        //postHTML();
+                        postArticle();
+                        System.out.print("Article created\n\n");
                         break;
                 }
             } while (numSwitch != 0);
@@ -99,13 +100,39 @@ public class APIWeb1 {
             ArticleList.add(article);
         }
     }
-    
+
     private void listeArticle() {
         for (Articles article : this.ArticleList) {
             System.out.println("\nTitle : " + article.getTitle());
             System.out.println("Content : " + article.getBody());
             System.out.println("Date : " + article.getDate());
             System.out.println("URL : " + article.getUrl() + "\n");
+        }
+    }
+
+    public void postArticle() throws ProtocolException, MalformedURLException, IOException, ParserConfigurationException, SAXException {
+        String titre, contenu, query;
+        System.out.print("Title : ");
+        titre = Clavier.lireString();
+        System.out.print("Content : ");
+        contenu = Clavier.lireString();
+
+        query = "title=" + titre + "&body=" + contenu;
+        HttpURLConnection cx = (HttpURLConnection) this.url.openConnection();
+        cx.setRequestMethod("POST");
+        cx.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+        cx.setDoInput(true);
+        cx.setDoOutput(true);
+        OutputStreamWriter writer = new OutputStreamWriter(cx.getOutputStream(), "UTF-8");
+        writer.write(query);
+        writer.close();
+        cx.connect();
+        int status = cx.getResponseCode();
+        if (status == 200) {
+            Articles article = new Articles(cx.getURL());
+            this.ArticleList.add(article);
+        } else {
+            System.out.println("Erreur dans la création de l'article");
         }
     }
 
@@ -124,36 +151,10 @@ public class APIWeb1 {
         String HTML = result.toString("UTF-8");
         return HTML;
     }*/
-    
- /*public void postHTML() throws ProtocolException, MalformedURLException, IOException {
-        String titre, contenu, query;
-        System.out.print("Titre : ");
-        titre = Clavier.lireString();
-        System.out.print("Contenu : ");
-        contenu = Clavier.lireString();
-        query = "title=" + titre + "&body=" + contenu;
-        URL url = new URL(urlCreer);
-        HttpURLConnection cx = (HttpURLConnection)url.openConnection();
-        cx.setRequestMethod("POST");
-        cx.addRequestProperty("User-Agent", "titre");
-        cx.setRequestProperty("accept-charset", "UTF-8");
-        cx.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-        cx.setDoInput(true);
-        cx.setDoOutput(true);
-        OutputStreamWriter writer = new OutputStreamWriter(cx.getOutputStream(), "UTF-8");
-        writer.write(query);
-        writer.close();
-        cx.connect();
-        System.out.println("Status : " + cx.getResponseCode());
-        System.out.println("URL : " + cx.getURL() + "\n");
-        urlBillet = cx.getURL().toString();
-    }*/
-    
  /*public ArrayList<Articles> getArticles()
     {
         return this.ArticleList;
     }*/
-    
  /*private ArrayList<String> parseLiens(String HTML) {
         Pattern pattern = Pattern.compile("href=\\\"([^\\\"]*)\\\"");
         Matcher matcher = pattern.matcher(HTML);
