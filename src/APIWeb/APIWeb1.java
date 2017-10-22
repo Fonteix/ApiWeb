@@ -43,9 +43,10 @@ public class APIWeb1 {
             listeURLBillet();
             int numSwitch = -1;
             do {
-                System.out.println("0 : quitter");
-                System.out.println("1 : Liste billet");
-                System.out.println("2 : Poster un billet");
+                System.out.println("0 : Quit");
+                System.out.println("1 : List article");
+                System.out.println("2 : Post article");
+                System.out.println("3 : Search article");
                 System.out.print("Choix : ");
                 numSwitch = Clavier.lireInt();
 
@@ -57,8 +58,14 @@ public class APIWeb1 {
                         break;
                     case 2:
                         postArticle();
-                        System.out.print("Article created\n\n");
+                        System.out.println("Article created\n");
                         break;
+                    case 3:
+                        System.out.print("Search : ");
+                        String find = Clavier.lireString();
+                        searchArticle(find);
+                        break;
+               
                 }
             } while (numSwitch != 0);
         } catch (Exception ex) {
@@ -136,6 +143,24 @@ public class APIWeb1 {
         }
     }
 
+    public void searchArticle(String find) {
+        try {
+            listeURLBillet();
+        } catch (Exception ex) {
+            System.out.println("search error");
+        }
+
+        for (Articles article : ArticleList) {
+            String title = article.getTitle().toLowerCase();
+            String body = article.getBody().toLowerCase();
+            find = find.toLowerCase();
+            if (title.contains(find) || body.contains(find)) {
+                System.out.println("\nTitle : " + article.getTitle());
+                System.out.println("SmallURL : " + article.getShortURL() + "\n");
+            }
+        }
+
+    }
     /*public String getHTML() throws ProtocolException, MalformedURLException, IOException {
         URL url = new URL(lien);
         HttpURLConnection cx = (HttpURLConnection) url.openConnection();

@@ -61,6 +61,10 @@ public class Articles {
         return date;
     }
 
+    public String getShortURL() {
+        return shortURL;
+    }
+
     public void setUrl(URL url) {
         this.url = url;
     }
@@ -75,6 +79,10 @@ public class Articles {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setShortURL(String shortURL) {
+        this.shortURL = shortURL;
     }
     
     public void delete() throws IOException {
