@@ -47,6 +47,7 @@ public class APIWeb1 {
                 System.out.println("1 : List article");
                 System.out.println("2 : Post article");
                 System.out.println("3 : Search article");
+                System.out.println("4 : Edit article");
                 System.out.print("Choix : ");
                 numSwitch = Clavier.lireInt();
 
@@ -65,11 +66,18 @@ public class APIWeb1 {
                         String find = Clavier.lireString();
                         searchArticle(find);
                         break;
-               
+                    case 4:
+                        System.out.print("Small URL (you can find it by search) : ");
+                        String smallURLEdit = Clavier.lireString();
+                        System.out.print("\nNew title : ");
+                        String newTitle = Clavier.lireString();
+                        System.out.print("\nNew content : ");
+                        String newBody = Clavier.lireString();
+                        editArticle(smallURLEdit, newTitle, newBody);
                 }
             } while (numSwitch != 0);
         } catch (Exception ex) {
-            System.out.println("bug");
+            System.out.println("menu exception");
         }
     }
 
@@ -147,7 +155,7 @@ public class APIWeb1 {
         try {
             listeURLBillet();
         } catch (Exception ex) {
-            System.out.println("search error");
+            System.out.println("search exception");
         }
 
         for (Articles article : ArticleList) {
@@ -160,6 +168,36 @@ public class APIWeb1 {
             }
         }
 
+    }
+
+    private void editArticle(String smallURL, String title, String body) {
+        for (Articles article : ArticleList) {
+            if (smallURL.equals(article.getShortURL())) {
+                try {
+                    String query = "<article><title>" + title + "</title><body>" + body + "</body></article>";
+                    URL urlEdit = new URL(url.toString() + smallURL);
+                    HttpURLConnection cx = (HttpURLConnection) urlEdit.openConnection();
+                    cx.setRequestMethod("PUT");
+                    cx.setRequestProperty("accept-charset", "UTF-8");
+                    cx.setRequestProperty("content-type", "text/xml");
+                    cx.setDoInput(true);
+                    cx.setDoOutput(true);
+                    OutputStreamWriter writer = new OutputStreamWriter(cx.getOutputStream(), "UTF-8");
+                    writer.write(query);
+                    writer.close();
+                    cx.connect();
+                    int status = cx.getResponseCode();
+                    if (status == 200) {
+                        System.out.println("Article modified\n");
+                    } else {
+                        System.out.println("Edit Error\n");
+                    }
+                    article.refresh();
+                } catch (Exception ex) {
+                    System.out.println("Edit exception");
+                }
+            }
+        }
     }
     /*public String getHTML() throws ProtocolException, MalformedURLException, IOException {
         URL url = new URL(lien);
